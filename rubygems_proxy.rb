@@ -32,7 +32,7 @@ class RubygemsProxy
   end
 
   def contents
-    if cached? && valid?
+    if cached? && !specs?
       logger.info "Read from cache: #{filepath}"
       open(filepath).read
     else
@@ -50,10 +50,6 @@ class RubygemsProxy
   def save(contents)
     FileUtils.mkdir_p File.dirname(filepath)
     File.open(filepath, "wb") {|handler| handler << contents}
-  end
-
-  def valid?
-    specs? ? Time.now - File.mtime(filepath) < 300 : true
   end
 
   def specs?

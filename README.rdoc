@@ -18,6 +18,10 @@ Set up Apache + Passenger or something similar.
     </Directory>
   </VirtualHost>
 
+Remember to chmod <tt>public/.htaccess</tt>:
+
+  $ chmod 644 public/.htaccess
+
 Set up your client to use this new Rubygems proxy.
 Add the following line to your Gemfile:
 

@@ -41,12 +41,13 @@ gem: --no-rdoc --no-ri</code></pre>
 
             <h2>Available gems</h2>
             <ul class="gems">
-                <% grouped_gems.each do |name, versions| %>
+                <% gems = grouped_gems; names = gems.keys.sort %>
+                <% names.each do |name| %>
                     <li>
                         <a href="<%= rubygems_url(name) %>"><%= name %></a>
 
                         <ul class="versions">
-                            <% versions.each do |version| %>
+                            <% gems[name].each do |version| %>
                                 <li>
                                     <a href="<%= gem_url(name, version) %>"><%= version %></a>
                                 </li>

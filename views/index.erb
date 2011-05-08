@@ -10,6 +10,13 @@
             h2 { margin-bottom: 0; }
             h2 + p { margin-top: 0; }
             #page { width: 600px; margin: 0 auto; padding: 25px; }
+            .versions li { display: inline; }
+            .versions li:after { content: ","; }
+            .versions li:last-of-type:after { content: ""; }
+            .versions { display: inline; margin: 0; padding: 0; }
+            .versions:before { content: "("; }
+            .versions:after { content: ")"; }
+            .gems { font-size: 80%; padding-left: 0; }
         </style>
     </head>
 
@@ -20,17 +27,34 @@
 
             <h2>Setup your client</h2>
             <p>Add the following line to your Gemfile:</p>
-            <pre><code>source "http://gems.simplesideias.com.br"</code></pre>
+            <pre><code>source "<%= server_url %>"</code></pre>
             <p>And change your <code>~/.gemrc</code> to something like this:</p>
             <pre><code>---
 :sources:
-- http://gems.simplesideias.com.br/
+- <%= server_url %>
 gem: --no-rdoc --no-ri</code></pre>
 
             <p>
                 Want to implement your own mirror? Get the
                 one-file Rack app at <a href="http://github.com/fnando/rubygems_proxy">Github</a>.
             </p>
+
+            <h2>Available gems</h2>
+            <ul class="gems">
+                <% grouped_gems.each do |name, versions| %>
+                    <li>
+                        <a href="<%= rubygems_url(name) %>"><%= name %></a>
+
+                        <ul class="versions">
+                            <% versions.each do |version| %>
+                                <li>
+                                    <a href="<%= gem_url(name, version) %>"><%= version %></a>
+                                </li>
+                            <% end %>
+                        </ul>
+                    </li>
+                <% end %>
+            </ul>
         </div>
 
         <a href="http://github.com/fnando/rubygems_proxy"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://d3nwyuy0nl342s.cloudfront.net/img/30f550e0d38ceb6ef5b81500c64d970b7fb0f028/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub"></a>

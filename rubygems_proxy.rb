@@ -1,6 +1,7 @@
 require "open-uri"
 require "fileutils"
 require "logger"
+require "erb"
 
 class RubygemsProxy
   attr_reader :env
@@ -15,10 +16,55 @@ class RubygemsProxy
   end
 
   def run
-    [200, {"Content-Type" => "application/octet-stream"}, [contents]]
+    logger.info "#{env["REQUEST_METHOD"]} #{env["PATH_INFO"]}"
+
+    case env["PATH_INFO"]
+    when "/"
+      [200, {"Content-Type" => "text/html"}, [erb(:index)]]
+    else
+      [200, {"Content-Type" => "application/octet-stream"}, [contents]]
+    end
   end
 
   private
+  def erb(view)
+    ERB.new(template(view)).result(binding)
+  end
+
+  def server_url
+    env["rack.url_scheme"] + "://" + File.join(env["SERVER_NAME"], env["PATH_INFO"])
+  end
+
+  def rubygems_url(gemname)
+    "http://rubygems.org/gems/%s" % Rack::Utils.escape(gemname)
+  end
+
+  def gem_url(name, version)
+    File.join(server_url, "gems", Rack::Utils.escape("#{name}-#{version}.gem"))
+  end
+
+  def gem_list
+    Dir[File.dirname(__FILE__) + "/public/gems/**/*.gem"]
+  end
+
+  def grouped_gems
+    gem_list.inject({}) do |buffer, file|
+      basename = File.basename(file)
+      parts = basename.gsub(/\.gem/, "").split("-")
+      version = parts.pop
+      name = parts.join("-")
+
+      buffer[name] ||= []
+      buffer[name] << version
+      buffer
+    end
+  end
+
+  def template(name)
+    @templates ||= {}
+    @templates[name] ||= File.read(File.dirname(__FILE__) + "/views/#{name}.erb")
+  end
+
   def root_dir
     File.expand_path "..", __FILE__
   end
@@ -32,7 +78,9 @@ class RubygemsProxy
   end
 
   def contents
-    if cached? && !specs?
+    if File.directory?(filepath)
+      erb(404)
+    elsif cached? && !specs?
       logger.info "Read from cache: #{filepath}"
       open(filepath).read
     else

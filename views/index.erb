@@ -39,12 +39,12 @@ gem: --no-rdoc --no-ri</code></pre>
                 one-file Rack app at <a href="http://github.com/fnando/rubygems_proxy">Github</a>.
             </p>
 
-            <% gems = grouped_gems; names = gems.keys.sort %>
             <h2>Available gems</h2>
             <p>
-                <strong><%= names.size %></strong> gems cached so far!
+                <strong><%= gem_list.size %></strong> gems cached so far!
             </p>
             <ul class="gems">
+                <% gems = grouped_gems; names = gems.keys.sort %>
                 <% names.each do |name| %>
                     <li>
                         <a href="<%= rubygems_url(name) %>"><%= name %></a>

@@ -17,7 +17,7 @@ class RubygemsProxy
 
   def run
     logger.info "GET #{env["PATH_INFO"]}"
-    if env["PATH_INFO"] == "/list"
+    if env["PATH_INFO"] == "/"
       [200, {"Content-Type" => "text/html"}, [listing]]
     else
       [200, {"Content-Type" => "application/octet-stream"}, [contents]]
@@ -65,7 +65,7 @@ class RubygemsProxy
         end
       end
     end
-    rhtml = ERB.new(File.read(File.expand_path("../list.erb", __FILE__)), nil, "%")
+    rhtml = ERB.new(File.read(File.expand_path("../index.erb", __FILE__)), nil, "%")
     rhtml.result(binding)
   end
 

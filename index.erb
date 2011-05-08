@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Rubygems Proxy/Mirror by Simples Ideias</title>
+        <title>Rubygems Mirror</title>
         <style type="text/css">
             body { background: #B9E1E7; font-size: 130%; color: #033; font-family: sans-serif; }
             pre { background: #111; color: #fff; padding: 10px; border-radius: 5px; }
@@ -12,17 +12,16 @@
             #page { width: 600px; margin: 0 auto; padding: 25px; }
         </style>
     </head>
-
     <body>
         <div id="page">
-            <h1>Rubygems Proxy/Mirror</h1>
+            <h1>RubyGems Mirror</h1>
             <p>Rack app for caching RubyGems files. Very useful in our build server that sometimes fails due to our network or rubygems.org timeout.</p>
 
             <h2>Setup your client</h2>
             <p>Add the following line to your Gemfile:</p>
-            <pre><code>source "http://gems.simplesideias.com.br"</code></pre>
+            <pre><code id="source">source "http://gems.simplesideias.com.br"</code></pre>
             <p>And change your <code>~/.gemrc</code> to something like this:</p>
-            <pre><code>---
+            <pre><code id="gemrc">---
 :sources:
 - http://gems.simplesideias.com.br/
 gem: --no-rdoc --no-ri</code></pre>
@@ -32,11 +31,22 @@ gem: --no-rdoc --no-ri</code></pre>
                 one-file Rack app at <a href="http://github.com/fnando/rubygems_proxy">Github</a>.
             </p>
 
-            <p>
-                Check out the <a href="/list">list of available gems</a> at this mirror site.
-            </p>
+            <h2>List of Available Gems in this Mirror:</h2>
+            <ul>
+              <% @gem_list.each do |file| %>
+                <li><%= file[:name] %> (<%= file[:versions].join(", ") %>)</li>
+              <% end %>
+            </ul>
+            <p>Total: <strong><%= @gem_list.size %> gems.</strong></p>
         </div>
-
         <a href="http://github.com/fnando/rubygems_proxy"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://d3nwyuy0nl342s.cloudfront.net/img/30f550e0d38ceb6ef5b81500c64d970b7fb0f028/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub"></a>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js"></script>
+        <script type="text/javascript">
+          $(document).ready(function(){
+              $("#source").html("source \"" + window.location.hostname + "\"");
+              $("#gemrc").html("---\n:sources:\n- http://" + window.location.hostname + "/\ngem: --no-ri --no-rdoc");
+          });
+        </script>
     </body>
 </html>
+

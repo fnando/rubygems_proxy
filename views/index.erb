@@ -50,7 +50,7 @@ gem: --no-rdoc --no-ri</code></pre>
                         <a href="<%= rubygems_url(name) %>"><%= name %></a>
 
                         <ul class="versions">
-                            <% gems[name].each do |version| %>
+                            <% gems[name].sort.each do |version| %>
                                 <li>
                                     <a href="<%= gem_url(name, version) %>"><%= version %></a>
                                 </li>

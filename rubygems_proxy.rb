@@ -24,6 +24,8 @@ class RubygemsProxy
     else
       [200, {"Content-Type" => "application/octet-stream"}, [contents]]
     end
+  rescue Exception
+    [200, {"Content-Type" => "text/html"}, [erb(404)]]
   end
 
   private

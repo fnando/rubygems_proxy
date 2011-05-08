@@ -1,6 +1,6 @@
 .DS_Store
-*.log
-restart.txt
-public/gems
-public/quick
-*.gz
+*.swp
+*.swo
+log/**
+tmp/**
+cache/**

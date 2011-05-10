@@ -34,6 +34,10 @@ And, finally, add this source to your ~/.gemrc.
     - http://gems.simplesideias.com.br/
     gem: --no-rdoc --no-ri
 
+The <tt>specs.4.8.gz</tt> is cached for 24 hours. This file contains all gems/versions
+and is over 3MB. You can invalidate this cache by running
+<tt>curl -X DELETE http://gems.simplesideias.com.br</tt>.
+
 = Maintainer
 
 * Nando Vieira - http://nandovieira.com.br

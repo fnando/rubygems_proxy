@@ -18,6 +18,8 @@ class RubygemsProxy
   def run
     logger.info "#{env["REQUEST_METHOD"]} #{env["PATH_INFO"]}"
 
+    return update_specs if env["REQUEST_METHOD"] == "DELETE"
+
     case env["PATH_INFO"]
     when "/"
       [200, {"Content-Type" => "text/html"}, [erb(:index)]]
@@ -82,7 +84,7 @@ class RubygemsProxy
   def contents
     if File.directory?(filepath)
       erb(404)
-    elsif cached? && !specs?
+    elsif cached?
       logger.info "Read from cache: #{filepath}"
       open(filepath).read
     else
@@ -102,12 +104,19 @@ class RubygemsProxy
     File.open(filepath, "wb") {|handler| handler << contents}
   end
 
-  def specs?
-    env["PATH_INFO"] =~ /specs\..+\.gz$/
+  def cached?
+    case File.basename(filepath)
+    when /^specs\./
+      File.exist?(filepath) && (Time.now - File.mtime(filepath)).to_i < 84600
+    when /\.gz$/
+      false
+    else
+      File.file?(filepath)
+    end
   end
 
-  def cached?
-    File.file?(filepath)
+  def specs?
+    env["PATH_INFO"] =~ /specs\..+\.gz$/
   end
 
   def filepath
@@ -120,5 +129,10 @@ class RubygemsProxy
 
   def url
     File.join("http://rubygems.org", env["PATH_INFO"])
+  end
+
+  def update_specs
+    Dir[File.dirname(__FILE__) + "/*.gz"].each {|file| File.unlink(file)}
+    [200, {"Content-Type" => "text/plain"}, [""]]
   end
 end

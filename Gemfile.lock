@@ -1,0 +1,10 @@
+GEM
+  remote: http://gems.simplesideias.com.br/
+  specs:
+    rack (1.2.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  rack (>= 1.0.0)

@@ -20,6 +20,7 @@ set -e
 
 case "$1" in
 	configure)
+		chown -R www-data /var/www/rubygems-proxy/
 		chmod 444 /var/www/rubygems-proxy/public/.htaccess
 	;;
 

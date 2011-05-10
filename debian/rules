@@ -32,8 +32,8 @@ install: build
 
 
 	# Add here commands to install the package into debian/<packagename>
-	mkdir -p $DEBIAN_PATH
-	cp -R public tmp views config.ru rubygems_proxy.rb $DEBIAN_PATH
+	mkdir -p $(DEBIAN_PATH)
+	cp -R public tmp views config.ru rubygems_proxy.rb $(DEBIAN_PATH)
 
 # Build architecture-independent files here.
 binary-indep: build install

@@ -18,9 +18,11 @@ APP_DIR=/var/www/$NAME
 set -e
 
 start() {
+    echo -n "Please use apache to start rubygems-proxy\n"
 }
 
 stop() {
+    echo -n "Please use apache to stop rubygems-proxy\n"
 }
 
 case "$1" in
@@ -28,22 +30,22 @@ case "$1" in
         echo -n "Starting $DESC: "
         start
         ;;
-  stop)
+    stop)
         echo -n "Stopping $DESC: "
         stop
         ;;
-  restart)
+    restart)
         echo "Restarting $DESC: "
         stop
         start
         sleep 4
         ;;
-  *)
-    N=/etc/init.d/$NAME
-    # echo "Usage: $N {start|stop|restart}" >&2
-    echo "Usage: $N {start|stop|restart|force-reload|status|force-stop}" >&2
-    exit 1
-    ;;
+    *)
+        N=/etc/init.d/$NAME
+        # echo "Usage: $N {start|stop|restart}" >&2
+        echo "Usage: $N {start|stop|restart}" >&2
+        exit 1
+        ;;
 esac
 
 exit 0

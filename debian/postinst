@@ -19,7 +19,11 @@ set -e
 
 
 case "$1" in
-    configure|abort-upgrade|abort-remove|abort-deconfigure)
+	configure)
+		chmod 444 /var/www/rubygems-proxy/public/.htaccess
+	;;
+
+	abort-upgrade|abort-remove|abort-deconfigure)
     ;;
 
     *)

@@ -7,6 +7,6 @@ Homepage: http://github.com/fnando/rubygems_proxy
 
 Package: rubygems-proxy
 Architecture: any
-Depends: ruby1.9.1, libapache2-mod-passenger
+Depends: ruby1.9.1, libapache2-mod-passenger, librack-ruby1.9.1
 Description: Rubygems proxy
  Receive and cache gems from rubygems.org

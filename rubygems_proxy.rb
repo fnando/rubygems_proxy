@@ -41,7 +41,7 @@ Proxy.config do
   parameter :spec_expiry_time
 end
 
-require './config'
+require File.expand_path("config.rb",File.dirname(__FILE__))
 
 class RubygemsProxy
   attr_reader :env

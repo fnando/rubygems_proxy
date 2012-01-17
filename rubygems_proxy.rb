@@ -133,7 +133,7 @@ class RubygemsProxy
       unless ::Proxy.http_proxy_url.nil?
         logger.info "Using proxy:#{::Proxy.http_proxy_url}"
         unless ::Proxy.http_proxy_user.nil?
-          logger.info "HTTP Proxy authentication enabled. Using user:#{::Proxy_http_proxy_user}"
+          logger.info "HTTP Proxy authentication enabled. Using user:#{::Proxy.http_proxy_user}"
           proxy_args = { :proxy_http_basic_authentication => [::Proxy.http_proxy_url, ::Proxy.http_proxy_user, ::Proxy.http_proxy_pass]}
         else
           logger.info "Using proxy without authentication."

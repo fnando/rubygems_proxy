@@ -1,5 +1,5 @@
 GEM
-  remote: http://192.168.27.170:9292/
+  remote: http://rubygems.org/
   specs:
     rack (1.4.1)
 

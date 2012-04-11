@@ -24,7 +24,12 @@ class RubygemsProxy
     when "/"
       [200, {"Content-Type" => "text/html"}, [erb(:index)]]
     else
-      [200, {"Content-Type" => "application/octet-stream"}, [contents]]
+      if env["QUERY_STRING"].empty?
+        [200, {"Content-Type" => "application/octet-stream"}, [contents]]
+      else
+        # add for query
+        [200, {"Content-Type" => "application/octet-stream"}, [query]]
+      end
     end
   rescue Exception
     [200, {"Content-Type" => "text/html"}, [erb(404)]]
@@ -97,6 +102,23 @@ class RubygemsProxy
     # If it fails again, we won't have any files anyway!
     logger.error "Error: #{error.class} => #{error.message}"
     open(filepath).read
+  end
+
+  # add for query
+  def query
+    logger.info "Query from interwebz: #{api_url}"
+    open(api_url).read
+  rescue Exception => error
+    # Just try to load from file if something goes wrong.
+    # This includes HTTP timeout, or something.
+    # If it fails again, we won't have any files anyway!
+    logger.error "Error: #{error.class} => #{error.message}"
+    open(filepath).read
+  end
+
+  # the query url
+  def api_url
+    File.join("http://rubygems.org", env["PATH_INFO"] + '?' + env["QUERY_STRING"])
   end
 
   def save(contents)

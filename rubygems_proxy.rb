@@ -2,6 +2,7 @@ require "open-uri"
 require "fileutils"
 require "logger"
 require "erb"
+require 'digest/md5'
 
 class RubygemsProxy
   attr_reader :env
@@ -119,16 +120,23 @@ class RubygemsProxy
     env["PATH_INFO"] =~ /specs\..+\.gz$/
   end
 
+  def dependencies?
+    env["PATH_INFO"] =~ /dependencies/
+  end
+
   def filepath
     if specs?
       File.join(root_dir, env["PATH_INFO"])
-    else
-      File.join(cache_dir, env["PATH_INFO"])
+    else dependencies? ?
+           File.join(cache_dir, env["PATH_INFO"] + "-" + Digest::MD5.hexdigest(env["QUERY_STRING"])) :
+           File.join(cache_dir, env["PATH_INFO"])
     end
   end
 
   def url
-    File.join("http://rubygems.org", env["PATH_INFO"])
+    dependencies? ?
+      File.join("http://rubygems.org", env["PATH_INFO"] + "?" + env["QUERY_STRING"]) :
+      File.join("http://rubygems.org", env["PATH_INFO"])
   end
 
   def update_specs

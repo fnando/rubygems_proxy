@@ -2,5 +2,6 @@
 *.log
 restart.txt
 public/gems
+public/api
 public/quick
 *.gz

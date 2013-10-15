@@ -107,8 +107,8 @@ class RubygemsProxy
 
   def cached?
     case File.basename(filepath)
-    when /^specs\./
-      File.exist?(filepath) && (Time.now - File.mtime(filepath)).to_i < 84600
+    when /^specs\./, /^dependencies___/
+      File.file?(filepath) && (Time.now - File.mtime(filepath)).to_i < 84600
     when /\.gz$/
       false
     else
@@ -125,7 +125,7 @@ class RubygemsProxy
       File.join(root_dir, env["PATH_INFO"])
     else
       name = env["PATH_INFO"]
-      name = "#{name}___#{Digest::SHA1.hexdigest env["QUERY_STRING"]}" unless env["QUERY_STRING"].to_s == ''
+      name = "#{name}___#{Digest::SHA512.hexdigest env["QUERY_STRING"]}" unless env["QUERY_STRING"].to_s == ''
       File.join(cache_dir, name)
     end
   end

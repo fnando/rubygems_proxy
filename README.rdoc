@@ -34,9 +34,22 @@ And, finally, add this source to your ~/.gemrc.
     - http://gems.simplesideias.com.br/
     gem: --no-rdoc --no-ri
 
-The <tt>specs.4.8.gz</tt> is cached for 24 hours. This file contains all gems/versions
+The <tt>specs.4.8.gz</tt> is cached for 24 hours by default. This file contains all gems/versions
 and is over 3MB. You can invalidate this cache by running
-<tt>curl -X DELETE http://gems.simplesideias.com.br</tt>.
+<tt>curl -X DELETE http://gems.simplesideias.com.br</tt>. 
+
+The expiration time and HTTP proxy settings can be specified in config.rb. Example:
+
+  Proxy.config do
+    # Proxy server
+    # If rubygems_proxy itself is behind a proxy server, add its configuration here.
+    # http_proxy_url "http://127.0.0.1:3128
+    # http_proxy_user "user"
+    # http_proxy_pass "password"
+    
+    # Time until the download specs expire. Default is 24 hours
+    spec_expiry_time 84600
+  end
 
 = Maintainer
 

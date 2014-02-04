@@ -3,6 +3,46 @@ require "fileutils"
 require "logger"
 require "erb"
 
+module Proxy
+  # we don't want to instantiate this class - it's a singleton,
+  # so just keep it as a self-extended module
+  extend self
+
+  # Appdata provides a basic single-method DSL with .parameter method
+  # being used to define a set of available settings.
+  # This method takes one or more symbols, with each one being
+  # a name of the configuration option.
+  def parameter(*names)
+    names.each do |name|
+      attr_accessor name
+
+      # For each given symbol we generate accessor method that sets option's
+      # value being called with an argument, or returns option's current value
+      # when called without arguments
+      define_method name do |*values|
+        value = values.first
+        value ? self.send("#{name}=", value) : instance_variable_get("@#{name}")
+      end
+    end
+  end
+
+  # And we define a wrapper for the configuration block, that we'll use to set up
+  # our set of options
+  def config(&block)
+    instance_eval &block
+  end
+
+end
+
+Proxy.config do
+  parameter :http_proxy_url
+  parameter :http_proxy_user
+  parameter :http_proxy_pass
+  parameter :spec_expiry_time
+end
+
+require File.expand_path("config.rb",File.dirname(__FILE__))
+
 class RubygemsProxy
   attr_reader :env
 
@@ -89,7 +129,18 @@ class RubygemsProxy
       open(filepath).read
     else
       logger.info "Read from interwebz: #{url}"
-      open(url).read.tap {|content| save(content)}
+      proxy_args = { }
+      unless ::Proxy.http_proxy_url.nil?
+        logger.info "Using proxy:#{::Proxy.http_proxy_url}"
+        unless ::Proxy.http_proxy_user.nil?
+          logger.info "HTTP Proxy authentication enabled. Using user:#{::Proxy.http_proxy_user}"
+          proxy_args = { :proxy_http_basic_authentication => [::Proxy.http_proxy_url, ::Proxy.http_proxy_user, ::Proxy.http_proxy_pass]}
+        else
+          logger.info "Using proxy without authentication."
+          proxy_args = { :proxy => ::Proxy.http_proxy_url }
+        end
+      end
+      open(url, proxy_args).read.tap {|content| save(content)}
     end
   rescue Exception => error
     # Just try to load from file if something goes wrong.
@@ -107,7 +158,7 @@ class RubygemsProxy
   def cached?
     case File.basename(filepath)
     when /^specs\./
-      File.exist?(filepath) && (Time.now - File.mtime(filepath)).to_i < 84600
+      File.exist?(filepath) && (Time.now - File.mtime(filepath)).to_i < ::Proxy.spec_expiry_time
     when /\.gz$/
       false
     else
